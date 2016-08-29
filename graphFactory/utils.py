@@ -9,7 +9,7 @@ import csv
 import os
 
 
-# Génére une Datarows Graph Planar #
+# Génére une Datarow brute Graph Planar (random density) #
 def graphFactoryPlanar(nb_graph, size_graph, graphtype, section='all'):
     cpt = 0
     while cpt <= nb_graph:
@@ -17,8 +17,29 @@ def graphFactoryPlanar(nb_graph, size_graph, graphtype, section='all'):
         G = nx.gnm_random_graph(size_graph,edgeForDensity(size_graph,m))
         if graphToCSV(G,graphtype,section,pl.is_planar(G)):
             cpt+=1
-        if cpt%10 == 0:
-            print(str(cpt)+'/'+str(nb_graph)+' '+str(100*cpt/nb_graph)+'%')
+            if cpt%10 == 0:
+                print(str(cpt)+'/'+str(nb_graph)+' '+str(100*cpt/nb_graph)+'%')
+
+#Génére une Datarow brute Graph Planar (normal distribution)
+def graphFactoryPlanarNormalDistribution(nb_graph,size_graph,graphtype,location,spread,section='all'):
+    cpt=0
+    while cpt <= nb_graph:
+        rdm_density = np.random.normal(location,spread)
+        G = nx.gnm_random_graph(size_graph,edgeForDensity(size_graph,rdm_density))
+        if graphToCSV(G,graphtype,section,pl.is_planar(G)):
+            cpt+=1
+            if cpt%10 == 0:
+                print(str(cpt)+'/'+str(nb_graph)+' '+str(100*cpt/nb_graph)+'%')
+
+def graphFactoryPlanarErdosRenyiGenration(nb_graph,size_graph,graphtype,edgeProba,section='all'):
+    cpt=0
+    while cpt <= nb_graph:
+        G = nx.gnp_random_graph(size_graph,edgeProba)
+        if graphToCSV(G,graphtype,section,pl.is_planar(G)):
+            cpt+=1
+            if cpt%10 == 0:
+                print(str(cpt)+'/'+str(nb_graph)+' '+str(100*cpt/nb_graph)+'%')
+
 
 # Transforme une Datarows brute en Datarows Treain/Test/Valid #
 def datarowsFactory(graphtype):
@@ -65,14 +86,22 @@ def datarowsFactory(graphtype):
     print('graph_valid({0[0]},{0[1]})'.format(graph_valid.shape))
     # print(graph_train.head())
 
-    graph_train.to_csv('Datarows/'+graphtype+'/data_train.csv',header=False,index=False)
+    ind_node = ['#'+str(i) for i in range(784)]
+    meta = ['Value','nb_node','nb_edge','nb_connex']
+
+    graph_train.columns = graph_test.columns = graph_valid.columns = ind_node + meta
+
+
+    graph_train.to_csv('Datarows/'+graphtype+'/data_train.csv',index=False)
     print('Datarows/'+graphtype+'/data_train.csv write!')
-    graph_test.to_csv('Datarows/'+graphtype+'/data_test.csv',header=False,index=False)
+    graph_test.to_csv('Datarows/'+graphtype+'/data_test.csv',index=False)
     print('Datarows/'+graphtype+'/data_test.csv write!')
-    graph_valid.to_csv('Datarows/'+graphtype+'/data_valid.csv',header=False,index=False)
+    graph_valid.to_csv('Datarows/'+graphtype+'/data_valid.csv',index=False)
     print('Datarows/'+graphtype+'/data_valid.csv write!')
 
-# Evalue le nombre d'arrête d'un grpah pour densité donnée #
+
+
+# Evalue le nombre d'arrête d'un graph pour densité donnée #
 def edgeForDensity(n,density):
     return (n*(n-1)*density)/2
 
@@ -86,16 +115,23 @@ def graphToCSV(G,graphtype, section, test):
     A = nx.to_numpy_matrix(G)
     A = np.reshape(A, -1)
     arrGraph = np.squeeze(np.asarray(A))
+
+    nb_nodes = 0
+    for node in nx.nodes_iter(G):
+        if len(G.neighbors(node))>0:
+            nb_nodes += 1
+
+    meta_info = [test,nb_nodes,G.number_of_edges(),nx.number_connected_components(G)]
     # On garde la même taille d'élemt de valeur de vérité #
     if test:
         if os.path.getsize(directory+section+"_true.csv") <= os.path.getsize(directory+section+"_false.csv"):
-            writer_true.writerow(np.append(arrGraph, test))
+            writer_true.writerow(np.append(arrGraph, meta_info))
             return True
         else:
             return False
     else:
         if os.path.getsize(directory+section+"_false.csv") <= os.path.getsize(directory+section+"_true.csv"):
-            writer_false.writerow(np.append(arrGraph, test))
+            writer_false.writerow(np.append(arrGraph, meta_info))
             return True
         else:
             return False
