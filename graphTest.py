@@ -21,10 +21,11 @@ IMAGE_TO_DISPLAY = 33
 SESSION = 'RDM'
 
 
-
+# Génération de mot aléatoire #
 def randomword(length):
     return ''.join(random.choice(string.lowercase) for i in range(length))
 
+# Transforme une séquence en image de matrice superieur complétée"
 def exportImgTop(img, name, path=''):
     # (784) => (28,28)
     one_image_entry = img.reshape(28, 28)
@@ -34,6 +35,7 @@ def exportImgTop(img, name, path=''):
     savefig(path+name+'.png')
     plt.clf()
 
+# Transforme une séquence en image de matrice inférieur complétée"
 def exportImgDown(img, name, path=''):
     # (784) => (28,28)
     one_image_entry = img.reshape(28, 28)
@@ -43,6 +45,7 @@ def exportImgDown(img, name, path=''):
     savefig(path+name+'.png')
     plt.clf()
 
+# Transforme une séquence en image #
 def exportImg(img, name, path=''):
     # (784) => (28,28)
     one_image = img.reshape(28,28)
@@ -50,6 +53,7 @@ def exportImg(img, name, path=''):
     savefig(path+name+'.png')
     plt.clf()
 
+# Transforme la séquence d'une image en graph d'une matrice adj sup #
 def exportImageAsGraph(img, name, path=''):
     one_image_entry = img.reshape(28, 28)
     one_image_top = np.triu(one_image_entry, 1)
@@ -66,6 +70,7 @@ def exportImageAsGraph(img, name, path=''):
     plt.savefig('img_rdm_graph_'+name+'.png')
     plt.clf()
 
+# Génere un graph et sauvegarde son image en indiquant sa planarité#
 def exportRandomGraph(name, path=''):
     G = nx.newman_watts_strogatz_graph(6,2,0.5)
     nx.draw(G)
@@ -73,12 +78,14 @@ def exportRandomGraph(name, path=''):
     plt.clf()
     print(pl.is_planar(G))
 
+# Export un graph et indique sa planarité#
 def exportGraph(G, name, path=''):
     nx.draw(G)
     plt.savefig('img_'+name+'.png')
     plt.clf()
     print(pl.is_planar(G))
 
+# Export un graph en Datarows CSV #
 def graphToCSV(G,graphtype, section, test):
     directory = "Datarows/"+graphtype+"/"
     if not os.path.exists(directory):
@@ -88,6 +95,7 @@ def graphToCSV(G,graphtype, section, test):
     A = nx.to_numpy_matrix(G)
     A = np.reshape(A, -1)
     arrGraph = np.squeeze(np.asarray(A))
+    # On garde la même taile d'élemt de valeur de vérité #
     if test:
         if os.path.getsize(directory+section+"_true.csv") <= os.path.getsize(directory+section+"_false.csv"):
             writer_true.writerow(np.append(arrGraph, test))
@@ -101,6 +109,7 @@ def graphToCSV(G,graphtype, section, test):
         else:
             return False
 
+# Génére une Datarows Graph Planar #
 def graphFactoryPlanar(nb_graph, size_graph, graphtype, section='all'):
     cpt = 0
     while cpt <= nb_graph:
@@ -111,9 +120,8 @@ def graphFactoryPlanar(nb_graph, size_graph, graphtype, section='all'):
         if cpt%10 == 0:
             print(str(cpt)+'/'+str(nb_graph)+' '+str(100*cpt/nb_graph)+'%')
 
-        # print(nx.density(G),m,edgeForDensity(size_graph,m),pl.is_planar(G))
-        # exportAsGraph(G,randomword(2)+"_"+str(size_graph)+"_"+str(nx.density(G)))
 
+# Transforme une Datarows brute en Datarows Treain/Test/Valid #
 def datarowsFactory(graphtype):
     data_false = pd.read_csv('Datarows/'+graphtype+'/all_false.csv')
     data_true = pd.read_csv('Datarows/'+graphtype+'/all_true.csv')
@@ -167,16 +175,18 @@ def datarowsFactory(graphtype):
     graph_valid.to_csv('Datarows/'+graphtype+'/data_valid.csv')
     print('Datarows/'+graphtype+'/data_valid.csv write!')
 
-
+# Evalue le nombre d'arrête d'un grpah pour densité donnée #
 def edgeForDensity(n,density):
     return (n*(n-1)*density)/2
 
+# Sauvegarde une image d'un graph avec un nom aléatoire #
 def display(img,img_w,img_h):
     one_graph = img.reshape(img_w,img_h)
     G = nx.from_numpy_matrix(one_graph)
     nx.draw_circular(G)
     plt.savefig('img_graph_'+randomword(2)+'.png')
     plt.clf()
+
 
 def dense_to_one_hot(labels_dense, num_classes):
     num_labels = labels_dense.shape[0]
@@ -233,10 +243,11 @@ def next_batch(batch_size):
 
 ###START###
 
+#Parsing datarow train #
 data = pd.read_csv('Datarows/'+SESSION+'/data_train.csv')
 print('data({0[0]},{0[1]})'.format(data.shape))
-# print (data.head())
-graphs = data.iloc[:, 1:-1].values
+
+graphs = data.iloc[1:, :-1].values
 graphs = graphs.astype(np.float)
 print('graphs({0[0]},{0[1]})'.format(graphs.shape))
 

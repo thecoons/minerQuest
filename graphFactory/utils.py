@@ -86,7 +86,10 @@ def datarowsFactory(graphtype):
     print('graph_valid({0[0]},{0[1]})'.format(graph_valid.shape))
     # print(graph_train.head())
 
-    ind_node = ['#'+str(i) for i in range(784)]
+    ##
+    ## - 4 pour la valeur de vérité et les méta parametres
+    ##
+    ind_node = ['#'+str(i) for i in range(data_true.shape[1]-4)]
     meta = ['Value','nb_node','nb_edge','nb_connex']
 
     graph_train.columns = graph_test.columns = graph_valid.columns = ind_node + meta
