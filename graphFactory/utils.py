@@ -7,7 +7,7 @@ import pandas as pd
 
 import csv
 import os
-
+    
 
 # Génére une Datarow brute Graph Planar (random density) #
 def graphFactoryPlanar(nb_graph, size_graph, graphtype, section='all'):

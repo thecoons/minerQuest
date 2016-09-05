@@ -5,6 +5,10 @@ from visualisationGraph.utils import *
 
 from graphFactory.DataEngine import GraphConnexBinEngine
 
+gcbe = GraphConnexBinEngine()
+print(gcbe.engine_type)
+print(gcbe.generate_element(10,0.3,True))
+
 # SESSION1 = 'RDM'
 # SESSION2 = 'NormalDistrib'
 # SESSION3 = 'ErdosRenyi'
