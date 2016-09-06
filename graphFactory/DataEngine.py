@@ -51,7 +51,7 @@ class GraphConnexBinEngine(DataEngine):
             G = nx.disjoint_union(g_1,g_2)
             ##Test
             print("nbr_comp_2:"+str(nx.number_connected_components(G)))
-            if(nx.number_connected_components(G)!=2):
+            if(nx.number_connected_components(G)<2):
                 return self.generate_element(n,p,value)
             else:
                 return (G, value)
