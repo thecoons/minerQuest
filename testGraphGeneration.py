@@ -7,8 +7,11 @@ from graphFactory.DataEngine import GraphConnexBinEngine
 
 gcbe = GraphConnexBinEngine()
 print(gcbe.engine_type)
-print(gcbe.generate_element(10,0.3,True))
-
+for ind in range(10):
+    if(ind%2 == 0):
+        gcbe.generate_element(10,0.3,4,6,True)
+    else:
+        gcbe.generate_element(10,0.3,4,6,False)
 # SESSION1 = 'RDM'
 # SESSION2 = 'NormalDistrib'
 # SESSION3 = 'ErdosRenyi'

@@ -35,7 +35,7 @@ class GraphConnexBinEngine(DataEngine):
         self._engine_type = 'GraphConnexBin'
         self._arr_labels = ['True','False']
 
-    def generate_element(self,n,p,value):
+    def generate_element(self,n,p,born_min,born_max,value):
         if(value):
             G = nx.gnp_random_graph(n,p)
             ##Test
