@@ -9,6 +9,7 @@
 import networkx as nx
 import numpy as np
 
+
 class DataEngine:
     def __init__(self):
         self._engine_type = ''
@@ -22,10 +23,10 @@ class DataEngine:
         self._engine_type = name
 
     @property
-    def _arr_labels(self):
+    def arr_labels(self):
         return self.__arr_labels
 
-    @_arr_labels.setter
+    @arr_labels.setter
     def _arr_labels(self,arr_labels):
         self.__arr_labels = arr_labels
 
@@ -35,7 +36,7 @@ class GraphConnexBinEngine(DataEngine):
         self._engine_type = 'GraphConnexBin'
         self._arr_labels = ['True','False']
 
-    def generate_element(self,n,p,born_min,born_max,value):
+    def generate_element(self,n,p,value):
         if(value):
             G = nx.gnp_random_graph(n,p)
             ##Test
@@ -43,7 +44,7 @@ class GraphConnexBinEngine(DataEngine):
             if(nx.number_connected_components(G)!=1):
                 return self.generate_element(n,p,value)
             else:
-                return (G, value)
+                return G
         else:
             p1 = np.random.random_integers((n/2)-(n*0.1),(n/2)+(n*0.1))
             g_1 = nx.gnp_random_graph(p1,p)
@@ -54,4 +55,4 @@ class GraphConnexBinEngine(DataEngine):
             if(nx.number_connected_components(G)<2):
                 return self.generate_element(n,p,value)
             else:
-                return (G, value)
+                return G
