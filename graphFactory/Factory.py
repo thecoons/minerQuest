@@ -42,13 +42,11 @@ class Factory:
             arr_csv_pts[label] = csv.writer(open(directory+self.sess_name+"_"+label+".csv","a"))
         for step in range(nb_element_by_class):
             for label in self.data_engine.arr_labels:
-                G = self.data_engine.generate_element(params['n'],params['p'],label)
+                G = self.data_engine.generate_element(params,label)
                 A = nx.to_numpy_matrix(G)
                 A = np.reshape(A,-1)
                 arr_A = np.squeeze(np.asarray(A))
                 arr_csv_pts[label].writerow(np.append(arr_A, label))
-
-
 
 
 class GraphFactory(Factory):

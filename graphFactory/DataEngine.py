@@ -4,7 +4,7 @@
 #   engine_type : str
 #   arr_labels : str[]
 #Methodes:
-#   elementGenerator()
+#   generate_element()
 ###
 import networkx as nx
 import numpy as np
@@ -36,13 +36,16 @@ class GraphConnexBinEngine(DataEngine):
         self._engine_type = 'GraphConnexBin'
         self._arr_labels = ['True','False']
 
-    def generate_element(self,n,p,value):
+    # Params{n,p}
+    def generate_element(self,params,value):
+        n = params['n']
+        p = params['p']
         if(value):
             G = nx.gnp_random_graph(n,p)
             ##Test
             # print("nbr_comp_1:"+str(nx.number_connected_components(G)))
             if(nx.number_connected_components(G)!=1):
-                return self.generate_element(n,p,value)
+                return self.generate_element(params,value)
             else:
                 return G
         else:
@@ -53,6 +56,6 @@ class GraphConnexBinEngine(DataEngine):
             ##Test
             # print("nbr_comp_2:"+str(nx.number_connected_components(G)))
             if(nx.number_connected_components(G)<2):
-                return self.generate_element(n,p,value)
+                return self.generate_element(params,value)
             else:
                 return G
